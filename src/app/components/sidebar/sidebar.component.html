@@ -1,0 +1,57 @@
+<p-sidebar [(visible)]="sidebarVisible" position="right" [modal]="false" [dismissible]="false" [closeOnEscape]="true" (onHide)="onSidebarHide()">
+
+    <!-- Lista de Itinerarios -->
+    <div *ngIf="!showItineraryDetail">
+        <h2>Itinerarios Disponibles</h2>
+        <div class="itinerary-list">
+            <p-panel *ngFor="let itinerary of itineraries" [header]="itinerary.title" [toggleable]="true" styleClass="mb-3">
+                <ng-template pTemplate="icons">
+                    <span class="itinerary-duration">
+                        {{itinerary.start_date | date:'dd/MM/yyyy'}} - {{itinerary.end_date | date:'dd/MM/yyyy'}}
+                    </span>
+                </ng-template>
+                <div class="itinerary-content">
+                    <p>{{itinerary.description}}</p>
+                    <div class="itinerary-footer">
+                        <span class="difficulty-badge" [ngClass]="itinerary.points[0]?.point_details?.difficulty?.toLowerCase()">
+                            {{itinerary.points[0]?.point_details?.difficulty}}
+                        </span>
+                    </div>
+                    <p-button label="Ver días del itinerario" (onClick)="selectItinerary(itinerary)" styleClass="p-button-raised">
+                    </p-button>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+
+    <!-- Detalle del Itinerario -->
+    <div *ngIf="showItineraryDetail && selectedItinerary">
+        <div class="detail-header">
+            <p-button (onClick)="backToList()" label="Volver a Itinerarios" styleClass="p-button-secondary p-button-outlined mb-3">
+            </p-button>
+        </div>
+
+        <h2>{{selectedItinerary.title}}</h2>
+        <p class="itinerary-info">
+            <span class="duration">
+                {{selectedItinerary.start_date | date:'dd/MM/yyyy'}} - {{selectedItinerary.end_date | date:'dd/MM/yyyy'}}
+            </span>
+        </p>
+
+        <ng-container *ngFor="let day of getDays(selectedItinerary)">
+            <p-panel [header]="'DÍA ' + day" [toggleable]="true">
+                <p-accordion>
+                    <p-accordionTab *ngFor="let point of getPointsForDay(selectedItinerary, day)" [header]="point.point_details.name">
+                        <div class="point-details">
+                            <p><strong>Descripción:</strong> {{point.point_details.description}}</p>
+                            <p><strong>Notas:</strong> {{point.notes}}</p>
+                            <p><strong>Dirección:</strong> {{point.point_details.address}}</p>
+                            <p><strong>Tiempo estimado:</strong> {{point.point_details.estimated_time}}</p>
+                            <p><strong>Dificultad:</strong> {{point.point_details.difficulty}}</p>
+                        </div>
+                    </p-accordionTab>
+                </p-accordion>
+            </p-panel>
+        </ng-container>
+    </div>
+</p-sidebar>

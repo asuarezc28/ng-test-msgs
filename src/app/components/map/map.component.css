@@ -1,0 +1,123 @@
+.map-container {
+    flex: 1;
+    position: relative;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: #e9e9e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.custom-div-icon {
+    background: none;
+    border: none;
+}
+
+.custom-marker {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.custom-marker:hover {
+    transform: scale(1.1);
+}
+
+.custom-marker i {
+    font-size: 16px;
+}
+
+.marker-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.6;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    70% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+.custom-tooltip {
+    background: white;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    font-size: 12px;
+    max-width: 200px;
+}
+
+.marker-tooltip {
+    text-align: center;
+}
+
+.marker-tooltip strong {
+    color: #333;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.marker-tooltip small {
+    color: #666;
+    font-size: 11px;
+}
+
+.popup-content {
+    padding: 10px;
+    max-width: 300px;
+}
+
+.popup-content h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.popup-content p {
+    margin: 5px 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.popup-content strong {
+    color: #666;
+}

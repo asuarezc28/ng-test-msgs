@@ -1,0 +1,10 @@
+<header class="header">
+    <p-menubar [model]="items" [style]="{'border-radius': '0'}">
+        <ng-template pTemplate="start">
+            <h1>WebGIS Application</h1>
+        </ng-template>
+        <ng-template pTemplate="end">
+            <p-button (click)="toggleSidebar()" icon="pi pi-bars" styleClass="p-button-rounded p-button-text p-button-white" />
+        </ng-template>
+    </p-menubar>
+</header>
