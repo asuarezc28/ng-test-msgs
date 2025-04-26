@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 
 export interface ChatRequest {
   start_date: string;
@@ -19,6 +19,10 @@ export interface ChatResponse {
 export class ChatService {
   private apiUrl = 'https://geodjangov2.onrender.com/api/generate-itinerary/';
 
+  // ReplaySubject para comunicar puntos al mapa
+  private itineraryPointsSubject = new BehaviorSubject<any>(null);
+  itineraryPoints$ = this.itineraryPointsSubject.asObservable();
+
   constructor(private http: HttpClient) {}
 
   sendQuery(query: string): Observable<ChatResponse> {
@@ -32,5 +36,11 @@ export class ChatService {
       query
     };
     return this.http.post<ChatResponse>(this.apiUrl, body);
+  }
+
+  // Método para emitir puntos al mapa
+  emitItineraryPoints(points: any) {
+    debugger;
+    this.itineraryPointsSubject.next(points);
   }
 }

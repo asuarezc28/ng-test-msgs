@@ -77,8 +77,13 @@ export class ChatButtonComponent implements OnInit {
     this.userInput = '';
     this.loading = true;
     this.chatService.sendQuery(query).subscribe({
-      next: (res: ChatResponse) => {
+      next: (res: any) => {
         this.messages.push({ from: 'bot', text: res.display });
+        // Emitir puntos al mapa si existen
+        debugger;
+        if (res.points) {
+          this.chatService.emitItineraryPoints(res.points);
+        }
         this.loading = false;
       },
       error: (err) => {

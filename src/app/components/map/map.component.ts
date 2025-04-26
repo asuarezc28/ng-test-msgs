@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { ItineraryService, Itinerary, Point } from '../../services/itinerary.service';
 import { Subscription } from 'rxjs';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-map',
@@ -16,6 +17,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   private markerLayers: L.LayerGroup[] = [];
   private selectedItinerary: Itinerary | null = null;
   private subscription: Subscription;
+  private chatPointsSub: Subscription | undefined;
 
   // Definir colores para cada día
   private dayColors = [
@@ -36,7 +38,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     DEFAULT: 'map-marker'
   };
 
-  constructor(private itineraryService: ItineraryService) {
+  constructor(private itineraryService: ItineraryService, private chatService: ChatService) {
     this.subscription = this.itineraryService.currentItinerary$.subscribe(itinerary => {
       console.log('Received itinerary in subscription:', itinerary);
       if (itinerary && this.map) {
@@ -47,6 +49,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     console.log('MapComponent initialized');
+    // Suscribirse a los puntos del chat
+    this.chatPointsSub = this.chatService.itineraryPoints$.subscribe(pointsGeoJson => {
+      console.log('Received points from chat service!!!!!!!!!!!:', pointsGeoJson);
+      debugger;
+      if (pointsGeoJson) {
+        this.displayChatPoints(pointsGeoJson);
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -57,6 +67,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.chatPointsSub) {
+      this.chatPointsSub.unsubscribe();
     }
   }
 
@@ -217,5 +230,53 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.map.fitBounds(bounds, {
       padding: [50, 50]
     });
+  }
+
+  // Nuevo método para mostrar puntos del chat
+  private displayChatPoints(pointsGeoJson: any) {
+    if (!this.map) return;
+    this.clearMap();
+    if (!pointsGeoJson || !pointsGeoJson.features) return;
+
+    // Convertir features a array tipo Point
+    const points: Point[] = pointsGeoJson.features.map((feature: any, idx: number) => ({
+      id: idx,
+      day: feature.properties?.day || 1,
+      order: feature.properties?.order || idx + 1,
+      notes: feature.properties?.notes || '',
+      point_details: {
+        id: idx,
+        name: feature.properties?.name || 'Punto',
+        description: feature.properties?.description || '',
+        type: feature.properties?.type || 'DEFAULT',
+        address: feature.properties?.address || '',
+        estimated_time: feature.properties?.estimated_time || '',
+        difficulty: feature.properties?.difficulty || '',
+        location: {
+          type: feature.geometry?.type || 'Point',
+          coordinates: feature.geometry?.coordinates || [0, 0]
+        },
+        created_at: '',
+        updated_at: ''
+      },
+      point_of_interest: 0,
+      restaurant: null,
+      event: null
+    }));
+
+    // Agrupar y pintar igual que los itinerarios normales
+    const pointsByDay = this.groupPointsByDay(points);
+    pointsByDay.forEach((dayPoints, dayIndex) => {
+      this.createDayMarkers(dayPoints, dayIndex);
+    });
+
+    // Hacer zoom a los puntos
+    const latLngs = points.map(p => {
+      const coords = p.point_details.location.coordinates;
+      return [coords[1], coords[0]] as [number, number];
+    });
+    if (latLngs.length > 0) {
+      this.map.fitBounds(latLngs as [number, number][] as L.LatLngBoundsLiteral, { padding: [50, 50] });
+    }
   }
 } 
