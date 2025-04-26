@@ -1,0 +1,17 @@
+<div class="chat-container" [style.left.px]="position.x" [style.top.px]="position.y">
+    <button pButton class="chat-button" icon="pi pi-comments" (click)="toggleChat()" [class.dragging]="isDragging">
+  </button>
+</div>
+
+<p-dialog [(visible)]="showChat" [modal]="false" [style]="{width: '350px'}" [draggable]="false" [resizable]="false" [position]="'bottomright'" [showHeader]="false">
+    <div class="chat-dialog">
+        <h3>Chat</h3>
+        <div class="chat-messages">
+            <!-- Aquí irán los mensajes -->
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Escribe un mensaje...">
+            <button pButton icon="pi pi-send"></button>
+        </div>
+    </div>
+</p-dialog>
