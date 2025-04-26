@@ -3,7 +3,7 @@
   </button>
 </div>
 
-<p-dialog [(visible)]="showChat" [modal]="false" [style]="{width: '350px'}" [draggable]="false" [resizable]="false" [position]="'bottomright'" [showHeader]="false">
+<p-dialog [(visible)]="showChat" [modal]="false" [style]="{width: '450px', height: '500px'}" [draggable]="false" [resizable]="false" [position]="'bottomright'" [showHeader]="false">
     <div class="chat-dialog">
         <div class="chat-header">
             <h3>Chat</h3>
@@ -11,11 +11,16 @@
             </button>
         </div>
         <div class="chat-messages">
-            <!-- Aquí irán los mensajes -->
+            <div *ngFor="let msg of messages" [ngClass]="{'user-msg': msg.from === 'user', 'bot-msg': msg.from === 'bot'}">
+                <span>{{msg.text}}</span>
+            </div>
+            <div *ngIf="loading" class="loading-msg">
+                <i class="pi pi-spin pi-spinner spinner-center"></i>
+            </div>
         </div>
         <div class="chat-input">
-            <input type="text" placeholder="Escribe un mensaje...">
-            <button pButton icon="pi pi-send"></button>
+            <input type="text" placeholder="Escribe tu consulta..." [(ngModel)]="userInput" (keydown)="onInputKeydown($event)" [disabled]="loading">
+            <button pButton icon="pi pi-send" (click)="sendMessage()" [disabled]="loading || !userInput.trim()"></button>
         </div>
     </div>
 </p-dialog>

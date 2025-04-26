@@ -1,12 +1,19 @@
 import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { ChatService, ChatResponse } from '../../services/chat.service';
+
+interface ChatMessage {
+  from: 'user' | 'bot';
+  text: string;
+}
 
 @Component({
   selector: 'app-chat-button',
   standalone: true,
-  imports: [CommonModule, ButtonModule, DialogModule],
+  imports: [CommonModule, FormsModule, ButtonModule, DialogModule],
   templateUrl: './chat-button.component.html',
   styleUrls: ['./chat-button.component.css']
 })
@@ -16,7 +23,11 @@ export class ChatButtonComponent implements OnInit {
   dragOffset = { x: 0, y: 0 };
   showChat = false;
 
-  constructor(private el: ElementRef) {}
+  messages: ChatMessage[] = [];
+  userInput: string = '';
+  loading: boolean = false;
+
+  constructor(private el: ElementRef, private chatService: ChatService) {}
 
   ngOnInit() {
     // Posición inicial en la esquina inferior derecha
@@ -56,6 +67,30 @@ export class ChatButtonComponent implements OnInit {
   toggleChat() {
     if (!this.isDragging) {
       this.showChat = !this.showChat;
+    }
+  }
+
+  sendMessage() {
+    const query = this.userInput.trim();
+    if (!query) return;
+    this.messages.push({ from: 'user', text: query });
+    this.userInput = '';
+    this.loading = true;
+    this.chatService.sendQuery(query).subscribe({
+      next: (res: ChatResponse) => {
+        this.messages.push({ from: 'bot', text: res.display });
+        this.loading = false;
+      },
+      error: (err) => {
+        this.messages.push({ from: 'bot', text: 'Ocurrió un error. Inténtalo de nuevo.' });
+        this.loading = false;
+      }
+    });
+  }
+
+  onInputKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !this.loading) {
+      this.sendMessage();
     }
   }
 }
