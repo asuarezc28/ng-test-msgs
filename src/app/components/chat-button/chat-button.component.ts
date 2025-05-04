@@ -27,14 +27,38 @@ export class ChatButtonComponent implements OnInit {
   userInput: string = '';
   loading: boolean = false;
 
+  pois: any[] = [];
+
   constructor(private el: ElementRef, private chatService: ChatService) {}
 
   ngOnInit() {
+    console.log('ngOnInit');
     // Posición inicial en la esquina inferior derecha
     this.position = {
       x: window.innerWidth - 100,
       y: window.innerHeight - 100
     };
+
+    // Cargar POIs reales desde el backend
+    this.chatService.getPointsOfInterest().subscribe({
+      next: (res) => {
+        // El endpoint devuelve un FeatureCollection, así que extraemos los features
+        this.pois = (res.results && res.results.features)
+          ? res.results.features.map((f: any) => ({
+              id: f.id,
+              name: f.properties.name,
+              description: f.properties.description,
+              type: f.properties.type,
+              difficulty: f.properties.difficulty
+            }))
+          : [];
+        console.log('POIs cargados:', this.pois);
+      },
+      error: (err) => {
+        console.error('Error cargando POIs', err);
+        this.pois = [];
+      }
+    });
   }
 
   @HostListener('mousedown', ['$event'])
@@ -76,7 +100,8 @@ export class ChatButtonComponent implements OnInit {
     this.messages.push({ from: 'user', text: query });
     this.userInput = '';
     this.loading = true;
-    this.chatService.sendQuery(query).subscribe({
+    // Usamos los POIs reales obtenidos
+    this.chatService.sendQuery(query, this.pois).subscribe({
       next: (res: any) => {
         this.messages.push({ from: 'bot', text: res.display });
         // Emitir puntos al mapa si existen

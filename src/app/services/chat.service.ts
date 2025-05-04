@@ -3,9 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 
 export interface ChatRequest {
-  start_date: string;
-  end_date: string;
   query: string;
+  available_pois: any[];
 }
 
 export interface ChatResponse {
@@ -25,15 +24,10 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
-  sendQuery(query: string): Observable<ChatResponse> {
-    // Fechas por defecto: hoy y hoy+2 días
-    const today = new Date();
-    const start_date = today.toISOString().slice(0, 10);
-    const end_date = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  sendQuery(query: string, available_pois: any[]): Observable<ChatResponse> {
     const body: ChatRequest = {
-      start_date,
-      end_date,
-      query
+      query,
+      available_pois
     };
     return this.http.post<ChatResponse>(this.apiUrl, body);
   }
@@ -42,5 +36,10 @@ export class ChatService {
   emitItineraryPoints(points: any) {
     debugger;
     this.itineraryPointsSubject.next(points);
+  }
+
+  getPointsOfInterest(): Observable<any> {
+    const url = 'https://geodjangov2.onrender.com/api/points-of-interest/';
+    return this.http.get<any>(url);
   }
 }
