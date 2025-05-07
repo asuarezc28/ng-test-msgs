@@ -33,6 +33,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadItineraries();
+    this.itineraryService.currentItinerary$.subscribe(itinerary => {
+      if (itinerary) {
+        this.selectItinerary(itinerary, true);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -58,11 +63,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.showItineraryDetail = false;
     this.selectedItinerary = null;
   }
+  
 
-  selectItinerary(itinerary: Itinerary) {
+
+  selectItinerary(itinerary: Itinerary, fromSubscription = false) {
     this.selectedItinerary = itinerary;
     this.showItineraryDetail = true;
-    this.itineraryService.setCurrentItinerary(itinerary);
+    if (!fromSubscription) {
+      this.itineraryService.setCurrentItinerary(itinerary);
+    }
   }
 
   backToList() {

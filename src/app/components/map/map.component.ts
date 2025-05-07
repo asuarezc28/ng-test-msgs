@@ -40,7 +40,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private itineraryService: ItineraryService, private chatService: ChatService) {
     this.subscription = this.itineraryService.currentItinerary$.subscribe(itinerary => {
-      console.log('Received itinerary in subscription:', itinerary);
+      console.log('Received itinerary in subscription!!! angel:', itinerary);
+      debugger;
       if (itinerary && this.map) {
         this.displayItinerary(itinerary);
       }
@@ -51,8 +52,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('MapComponent initialized');
     // Suscribirse a los puntos del chat
     this.chatPointsSub = this.chatService.itineraryPoints$.subscribe(pointsGeoJson => {
-      console.log('Received points from chat service!!!!!!!!!!!:', pointsGeoJson);
-      debugger;
       if (pointsGeoJson) {
         this.displayChatPoints(pointsGeoJson);
       }
@@ -60,7 +59,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('Initializing map');
     this.initMap();
   }
 
@@ -81,14 +79,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         attribution: '© OpenStreetMap contributors'
       }).addTo(this.map);
 
-      console.log('Map initialized successfully');
     } catch (error) {
       console.error('Error initializing map:', error);
     }
   }
 
   public displayItinerary(itinerary: Itinerary) {
-    console.log('Displaying itinerary:', itinerary);
     if (!this.map) {
       console.error('Map not initialized!');
       return;

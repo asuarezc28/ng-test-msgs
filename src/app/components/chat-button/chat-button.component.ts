@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ChatService, ChatResponse } from '../../services/chat.service';
+import { ItineraryService } from '../../services/itinerary.service';
 
 interface ChatMessage {
   from: 'user' | 'bot';
@@ -28,8 +29,9 @@ export class ChatButtonComponent implements OnInit {
   loading: boolean = false;
 
   pois: any[] = [];
+  filteredPois: any[] = [];
 
-  constructor(private el: ElementRef, private chatService: ChatService) {}
+  constructor(private el: ElementRef, private chatService: ChatService, private itineraryService: ItineraryService) {}
 
   ngOnInit() {
     console.log('ngOnInit');
@@ -53,6 +55,10 @@ export class ChatButtonComponent implements OnInit {
             }))
           : [];
         console.log('POIs cargados:', this.pois);
+        this.filteredPois = this.pois.map(poi => ({
+          id: poi.id,
+          name: poi.name
+        }));
       },
       error: (err) => {
         console.error('Error cargando POIs', err);
@@ -101,14 +107,17 @@ export class ChatButtonComponent implements OnInit {
     this.userInput = '';
     this.loading = true;
     // Usamos los POIs reales obtenidos
+       //  this.filteredPois = this.pois.map(poi => ({
+          //id: poi.id,
+          //name: poi.name,
+          //description: poi.description,
+        //}));   
     this.chatService.sendQuery(query, this.pois).subscribe({
       next: (res: any) => {
         this.messages.push({ from: 'bot', text: res.display });
-        // Emitir puntos al mapa si existen
-        debugger;
-        console.log('RES TO EMIT', res);
-        if (res.data.points) {
-          this.chatService.emitItineraryPoints(res.data.points);
+        // Emitir el itinerario al Sidebar
+        if (res.data) {
+          this.itineraryService.setCurrentItinerary(res.data);
         }
         this.loading = false;
       },
