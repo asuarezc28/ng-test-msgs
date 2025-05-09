@@ -55,10 +55,6 @@ export class ChatButtonComponent implements OnInit {
             }))
           : [];
         console.log('POIs cargados:', this.pois);
-        this.filteredPois = this.pois.map(poi => ({
-          id: poi.id,
-          name: poi.name
-        }));
       },
       error: (err) => {
         console.error('Error cargando POIs', err);
@@ -106,12 +102,7 @@ export class ChatButtonComponent implements OnInit {
     this.messages.push({ from: 'user', text: query });
     this.userInput = '';
     this.loading = true;
-    // Usamos los POIs reales obtenidos
-       //  this.filteredPois = this.pois.map(poi => ({
-          //id: poi.id,
-          //name: poi.name,
-          //description: poi.description,
-        //}));   
+    console.log('POIs!!!!!!!!!:', this.pois);
     this.chatService.sendQuery(query, this.pois).subscribe({
       next: (res: any) => {
         this.messages.push({ from: 'bot', text: res.display });

@@ -39,13 +39,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   constructor(private itineraryService: ItineraryService, private chatService: ChatService) {
-    this.subscription = this.itineraryService.currentItinerary$.subscribe(itinerary => {
-      console.log('Received itinerary in subscription!!! angel:', itinerary);
-      debugger;
-      if (itinerary && this.map) {
-        this.displayItinerary(itinerary);
+    this.subscription = this.itineraryService.currentItinerary$.subscribe(
+      ({itinerary}) => {
+        if (itinerary) {
+          this.displayItinerary(itinerary);
+        }
       }
-    });
+    );
   }
 
   ngOnInit() {

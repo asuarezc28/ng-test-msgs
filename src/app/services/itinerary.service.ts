@@ -30,15 +30,15 @@ export interface Point {
 }
 
 export interface Itinerary {
-  id: number;
+  id?: number;
   title: string;
   description: string;
   days: number;
   points: Point[];
-  start_date: Date;
-  end_date: Date;
-  created_at: string;
-  updated_at: string;
+  start_date: Date | string;
+  end_date: Date | string;
+  created_at?: string;
+  updated_at?: string;
   user: null;
 }
 
@@ -55,7 +55,7 @@ export interface ItineraryResponse {
 export class ItineraryService {
   // private apiUrl = `${environment.apiUrl}/itineraries`;
   private apiUrl = 'https://geodjangov2.onrender.com/api/itineraries';  // URL para la demo
-  private currentItinerarySubject = new BehaviorSubject<Itinerary | null>(null);
+  private currentItinerarySubject = new BehaviorSubject<{itinerary: Itinerary | null, isFromGPT: boolean}>({itinerary: null, isFromGPT: false});
   currentItinerary$ = this.currentItinerarySubject.asObservable();
 
   constructor(private http: HttpClient) {}
@@ -84,7 +84,7 @@ export class ItineraryService {
     );
   }
 
-  createItinerary(itinerary: Omit<Itinerary, 'id' | 'createdAt' | 'updatedAt'>): Observable<Itinerary> {
+  createItinerary(itinerary: Omit<Itinerary, 'id' | 'created_at' | 'updated_at'>): Observable<Itinerary> {
     return this.http.post<Itinerary>(this.apiUrl, itinerary);
   }
 
@@ -96,8 +96,8 @@ export class ItineraryService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  setCurrentItinerary(itinerary: Itinerary | null) {
-    this.currentItinerarySubject.next(itinerary);
+  setCurrentItinerary(itinerary: Itinerary, isFromGPT: boolean = true) {
+    this.currentItinerarySubject.next({itinerary, isFromGPT});
   }
 
   addPoint(itineraryId: number, point: Omit<Point, 'id'>): Observable<Point> {

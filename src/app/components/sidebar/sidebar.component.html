@@ -1,7 +1,17 @@
 <p-sidebar [(visible)]="sidebarVisible" position="right" [modal]="false" [dismissible]="false" [closeOnEscape]="true" (onHide)="onSidebarHide()">
 
+    <!-- Botón de Guardar (solo visible cuando viene de GPT) -->
+    <div *ngIf="isFromGPT && selectedItinerary" class="save-button-container">
+        <p-button label="Guardar Itinerario" icon="pi pi-save" (onClick)="saveItinerary()" styleClass="p-button-success"></p-button>
+    </div>
+
+    <!-- Spinner de carga -->
+    <div *ngIf="loadingItineraries" class="spinner-container">
+        <p-progressSpinner styleClass="custom-spinner" strokeWidth="4" fill="#eeeeee" animationDuration=".5s"></p-progressSpinner>
+    </div>
+
     <!-- Lista de Itinerarios -->
-    <div *ngIf="!showItineraryDetail">
+    <div *ngIf="!showItineraryDetail && !loadingItineraries">
         <h2>Itinerarios Disponibles</h2>
         <div class="itinerary-list">
             <p-panel *ngFor="let itinerary of itineraries" [header]="itinerary.title" [toggleable]="true" styleClass="mb-3">

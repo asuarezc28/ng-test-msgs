@@ -133,3 +133,26 @@ h2 {
     margin: 0;
     line-height: 1.5;
 }
+
+.save-button-container {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+}
+
+.save-button-container .p-button {
+    width: 100%;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+}
+
+.custom-spinner {
+    width: 50px !important;
+    height: 50px !important;
+}
