@@ -54,7 +54,7 @@ export interface ItineraryResponse {
 })
 export class ItineraryService {
   // private apiUrl = `${environment.apiUrl}/itineraries`;
-  private apiUrl = 'https://geodjangov2.onrender.com/api/itineraries';  // URL para la demo
+  private apiUrl = 'https://geodjangov2.onrender.com/api/itineraries/';  // URL para la demo
   private currentItinerarySubject = new BehaviorSubject<{itinerary: Itinerary | null, isFromGPT: boolean}>({itinerary: null, isFromGPT: false});
   currentItinerary$ = this.currentItinerarySubject.asObservable();
 

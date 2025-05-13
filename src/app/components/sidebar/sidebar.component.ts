@@ -85,6 +85,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.selectedItinerary = itinerary;
     this.showItineraryDetail = true;
     this.isFromGPT = fromGPT;
+    this.itineraryService.setCurrentItinerary(itinerary, fromGPT);
   }
 
   backToList() {
@@ -106,6 +107,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .sort((a, b) => a.order - b.order);
   }
 
+  formatDate(date: string | Date): string {
+    const d = new Date(date);
+    return d.toISOString().slice(0, 10); // YYYY-MM-DD
+  }
+
   saveItinerary() {
     if (this.selectedItinerary) {
       // Crear un nuevo objeto sin los campos que no queremos enviar
@@ -114,12 +120,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       // Asegurarnos de que las fechas estén en el formato correcto
       const itineraryToSave = {
         ...itineraryWithoutMetadata,
-        start_date: this.selectedItinerary.start_date instanceof Date 
-          ? this.selectedItinerary.start_date.toISOString() 
-          : this.selectedItinerary.start_date,
-        end_date: this.selectedItinerary.end_date instanceof Date 
-          ? this.selectedItinerary.end_date.toISOString() 
-          : this.selectedItinerary.end_date
+        start_date: this.formatDate(this.selectedItinerary.start_date),
+        end_date: this.formatDate(this.selectedItinerary.end_date)
       };
 
       this.itineraryService.createItinerary(itineraryToSave).subscribe({

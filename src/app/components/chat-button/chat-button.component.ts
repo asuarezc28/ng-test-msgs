@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ChatService, ChatResponse } from '../../services/chat.service';
-import { ItineraryService } from '../../services/itinerary.service';
+import { Itinerary, ItineraryService } from '../../services/itinerary.service';
 
 interface ChatMessage {
   from: 'user' | 'bot';
@@ -107,8 +107,11 @@ export class ChatButtonComponent implements OnInit {
       next: (res: any) => {
         this.messages.push({ from: 'bot', text: res.display });
         // Emitir el itinerario al Sidebar
+        console.log('RES DATA:', res.data);
+        const test = this.buildFullItinerary(res.data);
+        console.log('TEST:', test);
         if (res.data) {
-          this.itineraryService.setCurrentItinerary(res.data);
+          this.itineraryService.setCurrentItinerary(test as Itinerary);
         }
         this.loading = false;
       },
@@ -118,6 +121,46 @@ export class ChatButtonComponent implements OnInit {
       }
     });
   }
+
+   buildFullItinerary(compactData: any) {
+  const now = new Date().toISOString();
+
+  return {
+    id: 1,
+    title: compactData.title,
+    description: compactData.description,
+    start_date: "2024-03-15T00:00:00.000Z", // Puedes parametrizar estas fechas
+    end_date: "2024-03-16T00:00:00.000Z",
+    user: null,
+    points: compactData.points.map((p: { id: any; day: any; order: any; notes: any; point_details: { name: any; description: any; coordinates: any; type: any; estimated_time: string; }; }) => ({
+      id: p.id,
+      day: p.day,
+      order: p.order,
+      notes: p.notes,
+      point_details: {
+        id: p.id,
+        name: p.point_details.name,
+        description: p.point_details.description,
+        location: {
+          type: "Point",
+          coordinates: p.point_details.coordinates
+        },
+        address: "", // Puedes agregar si tienes info extra
+        type: p.point_details.type,
+        difficulty: "EASY", // O asigna según tu lógica
+        estimated_time: p.point_details.estimated_time + ":00", // Añadimos segundos
+        created_at: now,
+        updated_at: now
+      },
+      point_of_interest: p.id,
+      restaurant: null,
+      event: null
+    })),
+    created_at: now,
+    updated_at: now
+  };
+}
+
 
   onInputKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !this.loading) {
