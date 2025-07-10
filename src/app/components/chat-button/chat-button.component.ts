@@ -105,6 +105,7 @@ export class ChatButtonComponent implements OnInit {
     console.log('POIs!!!!!!!!!:', this.pois);
     this.chatService.sendQuery(query, this.pois).subscribe({
       next: (res: any) => {
+        console.log('RES:!!!!!!!!!!!!', res);
         this.messages.push({ from: 'bot', text: res.display });
         // Emitir el itinerario al Sidebar
         console.log('RES DATA:', res.data);

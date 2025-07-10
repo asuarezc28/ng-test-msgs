@@ -17,6 +17,7 @@ export interface ChatResponse {
 })
 export class ChatService {
   private apiUrl = 'https://geodjangov2.onrender.com/api/generate-itinerary/';
+  private apiUrl2 = 'https://n8n-yfjm.onrender.com/webhook-test/lapalma-chat';
 
   // ReplaySubject para comunicar puntos al mapa
   private itineraryPointsSubject = new BehaviorSubject<any>(null);
@@ -24,12 +25,21 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
-  sendQuery(query: string, available_pois: any[]): Observable<ChatResponse> {
+ // sendQuery(query: string, available_pois: any[]): Observable<ChatResponse> {
+    //const body: ChatRequest = {
+      //query,
+      //available_pois
+    //};
+    //return this.http.post<ChatResponse>(this.apiUrl, body);
+  //}
+
+
+ sendQuery(query: string, available_pois: any[]): Observable<any> {
     const body: ChatRequest = {
       query,
       available_pois
     };
-    return this.http.post<ChatResponse>(this.apiUrl, body);
+    return this.http.post<any>(this.apiUrl2, body);
   }
 
   // Método para emitir puntos al mapa

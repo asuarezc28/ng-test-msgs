@@ -20,7 +20,7 @@
         </div>
         <div class="chat-input">
             <input type="text" placeholder="Escribe tu consulta..." [(ngModel)]="userInput" (keydown)="onInputKeydown($event)" [disabled]="loading">
-            <button pButton icon="pi pi-send" (click)="sendMessage()" [disabled]="loading || !userInput.trim()"></button>
+            <button pButton icon="pi pi-send" (click)="sendMessage()"></button>
         </div>
     </div>
 </p-dialog>
