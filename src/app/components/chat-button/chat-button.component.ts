@@ -106,15 +106,22 @@ export class ChatButtonComponent implements OnInit {
     this.chatService.sendQuery(query, this.pois).subscribe({
       next: (res: any) => {
         console.log('RES:!!!!!!!!!!!!', res);
-        this.messages.push({ from: 'bot', text: res.display });
-        // Emitir el itinerario al Sidebar
-        console.log('RES DATA:', res.data);
-        const test = this.buildFullItinerary(res.data);
-        console.log('TEST:', test);
-        if (res.data) {
-          this.itineraryService.setCurrentItinerary(test as Itinerary);
+        if (res.points){
+        const test = this.mapToOriginalStructure(res);
+        console.log('TEST:!!!!!!!!!!!!', test);
+        this.itineraryService.setCurrentItinerary(test as unknown as Itinerary);
         }
-        this.loading = false;
+       // console.log('TEST:!!!!!!!!!!!!', test);
+     this.messages.push({ from: 'bot', text: res.text });
+       // this.messages.push({ from: 'bot', text: res.display });
+        // Emitir el itinerario al Sidebar
+        // console.log('RES DATA:', res.data);
+        //const test = this.buildFullItinerary(res.data);
+        //console.log('TEST:', test);
+        //if (res.data) {
+          //this.itineraryService.setCurrentItinerary(test as Itinerary);
+        //}
+        //this.loading = false;
       },
       error: (err) => {
         this.messages.push({ from: 'bot', text: 'Ocurrió un error. Inténtalo de nuevo.' });
@@ -122,6 +129,34 @@ export class ChatButtonComponent implements OnInit {
       }
     });
   }
+
+ mapToOriginalStructure(data: { title: string; points: any[] }) {
+  const result = {
+    display: "Tu itinerario ya está disponible en el mapa",
+    data: {
+      title: data.title,
+      description: `Una ruta para descubrir La Palma en ${new Set(data.points.map(p => p.day)).size} días.`,
+      points: data.points.map((p, index): any => ({
+        id: index + 1,
+        day: p.day,
+        order: p.order,
+        notes: "", // puedes rellenarlo con lógica si quieres
+        point_details: {
+          name: p.name,
+          description: p.desc,
+          type: "PLACE", // o intenta inferirlo si tienes más datos
+          estimated_time: p.time,
+          coordinates: p.coords
+        }
+      }))
+    }
+  };
+
+  return result;
+}
+
+
+
 
    buildFullItinerary(compactData: any) {
   const now = new Date().toISOString();

@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="chat-input">
-            <input type="text" placeholder="Escribe tu consulta..." [(ngModel)]="userInput" (keydown)="onInputKeydown($event)" [disabled]="loading">
+            <input type="text" placeholder="Escribe tu consulta..." [(ngModel)]="userInput" (keydown)="onInputKeydown($event)">
             <button pButton icon="pi pi-send" (click)="sendMessage()"></button>
         </div>
     </div>

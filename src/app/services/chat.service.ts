@@ -17,7 +17,8 @@ export interface ChatResponse {
 })
 export class ChatService {
   private apiUrl = 'https://geodjangov2.onrender.com/api/generate-itinerary/';
-  private apiUrl2 = 'https://n8n-yfjm.onrender.com/webhook-test/lapalma-chat';
+  private apiUrl2 = 'https://n8n-yfjm.onrender.com/webhook/turism-chat';
+  private apiUrl3 = 'https://n8n-yfjm.onrender.com/webhook-test/turism-chat';
 
   // ReplaySubject para comunicar puntos al mapa
   private itineraryPointsSubject = new BehaviorSubject<any>(null);
