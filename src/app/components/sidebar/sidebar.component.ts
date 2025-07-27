@@ -113,6 +113,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   saveItinerary() {
+    debugger;
     if (this.selectedItinerary) {
       // Crear un nuevo objeto sin los campos que no queremos enviar
       const { id, created_at, updated_at, ...itineraryWithoutMetadata } = this.selectedItinerary;
@@ -120,8 +121,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       // Asegurarnos de que las fechas estén en el formato correcto
       const itineraryToSave = {
         ...itineraryWithoutMetadata,
-        start_date: this.formatDate(this.selectedItinerary.start_date),
-        end_date: this.formatDate(this.selectedItinerary.end_date)
+        start_date: '2025-03-25',
+        end_date: '2025-04-25'
       };
 
       this.itineraryService.createItinerary(itineraryToSave).subscribe({

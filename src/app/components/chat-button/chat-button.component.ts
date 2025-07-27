@@ -109,7 +109,7 @@ export class ChatButtonComponent implements OnInit {
         if (res.points){
         const test = this.mapToOriginalStructure(res);
         console.log('TEST:!!!!!!!!!!!!', test);
-        this.itineraryService.setCurrentItinerary(test as unknown as Itinerary);
+        this.itineraryService.setCurrentItinerary(test?.data as unknown as Itinerary);
         }
        // console.log('TEST:!!!!!!!!!!!!', test);
      this.messages.push({ from: 'bot', text: res.text });
@@ -146,7 +146,11 @@ export class ChatButtonComponent implements OnInit {
           description: p.desc,
           type: "PLACE", // o intenta inferirlo si tienes más datos
           estimated_time: p.time,
-          coordinates: p.coords
+          coordinates: p.coords,
+          location: {
+            type: "Point",
+            coordinates: p.coords
+          }
         }
       }))
     }
